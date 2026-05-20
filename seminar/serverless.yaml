@@ -1,0 +1,42 @@
+service: seminar-db-handler
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: eu-central-1
+  environment:
+    DYNAMODB_TABLE: SeminarRegistracie
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:GetItem
+          Resource: "arn:aws:dynamodb:eu-central-1:417613459878:table/SeminarRegistracie"
+
+functions:
+  zapisDoDb:
+    handler: src/db_handler.handler
+    events:
+      - sns:
+          arn: arn:aws:sns:eu-central-1:417613459878:SeminarRegister
+
+resources:
+  Resources:
+    SeminarTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: SeminarRegistracie
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
