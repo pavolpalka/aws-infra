@@ -1,0 +1,32 @@
+name: Deploy na AWS
+
+on:
+  push:
+    # Ignoruje bežné pushes do vetiev, spustí sa IBA pri pushnutí tagu
+    tags:
+      - 'v*' # Spustí sa pre v1.0, v2.1.4, v1.0.0-beta atď.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stiahnutie kódu
+        uses: actions/checkout@v4
+
+      - name: Nastavenie Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Inštalácia Serverless Frameworku
+        run: npm install -g serverless
+
+      - name: Konfigurácia AWS údajov
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Deploy aplikácie
+        run: serverless deploy
