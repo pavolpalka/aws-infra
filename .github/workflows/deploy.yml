@@ -2,9 +2,8 @@ name: Deploy na AWS
 
 on:
   push:
-    # Ignoruje bežné pushes do vetiev, spustí sa IBA pri pushnutí tagu
     tags:
-      - 'v*' # Spustí sa pre v1.0, v2.1.4, v1.0.0-beta atď.
+      - 'v*' # Spustí sa iba pri pushe tagu (napr. v1.0.2)
 
 jobs:
   deploy:
@@ -16,18 +15,18 @@ jobs:
       - name: Nastavenie Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 # Aktualizované na najnovšiu stabilnú verziu 22
 
-      - name: Inštalácia Serverless Frameworku
-        run: npm install -g serverless
+      - name: Inštalácia Serverless Frameworku (Bezplatná V3)
+        run: npm install -g serverless@3
 
       - name: Konfigurácia AWS údajov
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWSACCESSKEYID }}
-          aws-secret-access-key: ${{ secrets.AWSSECRETACCESSKEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      - name: Deploy seminaru
+      - name: Deploy aplikácie
         run: serverless deploy
-        working-directory: ./seminar
+        working-directory: ./seminar # Upravené podľa tvojej štruktúry z logu
