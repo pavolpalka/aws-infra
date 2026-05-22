@@ -1,4 +1,5 @@
 service: seminar-db-handler
+frameworkVersion: '3' # Zámok na bezplatnú verziu 3
 
 provider:
   name: aws
